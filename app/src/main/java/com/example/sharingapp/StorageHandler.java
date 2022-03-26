@@ -1,6 +1,7 @@
 package com.example.sharingapp;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,9 +17,11 @@ import java.util.ArrayList;
 
 public class StorageHandler<T> {
     String FILENAME;
+    private Type listType;
 
-    public StorageHandler(String FILENAME) {
+    public StorageHandler(String FILENAME, Type listType) {
         this.FILENAME = FILENAME;
+        this.listType = listType;
     }
 
     public ArrayList<T> load(Context context) {
@@ -27,7 +30,7 @@ public class StorageHandler<T> {
             FileInputStream stream = context.openFileInput(FILENAME);
             InputStreamReader reader = new InputStreamReader(stream);
             Gson gson = new Gson();
-            Type listType = new TypeToken<ArrayList<T>>() {}.getType();
+
             list = gson.fromJson(reader, listType);
             stream.close();
         }catch (FileNotFoundException e){
@@ -35,6 +38,7 @@ public class StorageHandler<T> {
         }catch (IOException e){
             list = new ArrayList<T>();
         }
+
         return list;
     }
 
@@ -43,7 +47,7 @@ public class StorageHandler<T> {
             FileOutputStream stream = context.openFileOutput(FILENAME, 0);
             OutputStreamWriter writer = new OutputStreamWriter(stream);
             Gson gson = new Gson();
-            gson.toJson(list, writer);
+            gson.toJson(list, listType, writer);
             writer.flush();
             stream.close();
         }catch (FileNotFoundException e){

@@ -1,6 +1,7 @@
 package com.example.sharingapp;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,11 +18,11 @@ import java.util.ArrayList;
 public class ItemList extends Observable {
     private ArrayList<Item> items;
     private String FILENAME = "items.sav";
-    private StorageHandler storageHandler;
+    private StorageHandler<Item> storageHandler;
 
     public ItemList(){
-        items = new ArrayList<Item>();
-        storageHandler = new StorageHandler<Item>(FILENAME);
+        items = new ArrayList<>();
+        storageHandler = new StorageHandler<>(FILENAME, new TypeToken<ArrayList<Item>>() {}.getType());
     }
 
     public void setItems(ArrayList<Item> item_list){
@@ -64,6 +65,7 @@ public class ItemList extends Observable {
 
     public void loadItems(Context context){
         items = storageHandler.load(context);
+        Log.i("items", items.toString());
         notifyObservers();
     }
 

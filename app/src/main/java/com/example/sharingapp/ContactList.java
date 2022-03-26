@@ -17,11 +17,11 @@ import java.util.ArrayList;
 public class ContactList extends Observable {
     private ArrayList<Contact> contacts;
     private String FILENAME = "contacts.sav";
-    private StorageHandler storageHandler;
+    private StorageHandler<Contact> storageHandler;
 
     public ContactList() {
         this.contacts = new ArrayList<Contact>();
-        storageHandler = new StorageHandler<Contact>(FILENAME);
+        storageHandler = new StorageHandler<Contact>(FILENAME, new TypeToken<ArrayList<Contact>>() {}.getType());
     }
 
     public ArrayList<Contact> getContacts() {

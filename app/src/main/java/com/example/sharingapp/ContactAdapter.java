@@ -1,6 +1,7 @@
 package com.example.sharingapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        Log.println(Log.ASSERT, "kig", getItem(position).toString());
         Contact contact = getItem(position);
 
         String username = "Username: " + contact.getUsername();

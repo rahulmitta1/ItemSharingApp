@@ -21,6 +21,9 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
     private ContactListController contactListController = new ContactListController((contactList));
     private int pos;
 
+    private String usernameString;
+    private String emailString;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,27 +51,37 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
         finish();
     }
 
-    public void saveContact(View view) {
-        String usernameString = username.getText().toString();
-        String emailString = email.getText().toString();
-        String id = contactController.getId(); // Reuse the contact id
+    public boolean validateInput(){
+        usernameString = username.getText().toString();
+        emailString = email.getText().toString();
 
         if(emailString.equals("")){
             email.setError("Empty field!");
-            return;
+            return false;
         }
 
         if(!emailString.contains("@")){
             email.setError("Must be an email address!");
-            return;
+            return false;
         }
 
         // Check that username is unique AND username is changed
         // (Note: if username was not changed, then this should be fine, because it was already unique)
         if(!contactListController.isUsernameAvailable(usernameString) && !contactController.getUsername().equals(usernameString)){
             username.setError("Username already taken!");
+            return false;
+        }
+
+        return true;
+    }
+
+    public void saveContact(View view) {
+
+        if(!validateInput()){
             return;
         }
+
+        String id = contactController.getId(); // Reuse the contact id
 
         Contact updated_contact = new Contact(usernameString, emailString, id);
 
@@ -76,6 +89,8 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
 
         finish(); // End EditContactActivity
     }
+
+
 
     @Override
     public void update() {

@@ -15,6 +15,9 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText username;
     private EditText email;
 
+    private String usernameString;
+    private String emailString;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,27 +30,36 @@ public class AddContactActivity extends AppCompatActivity {
         contactListController.loadContacts(context);
     }
 
-    public void saveContact(View view) {
-        String usernameString = username.getText().toString();
-        String emailString = email.getText().toString();
+    public boolean validateInput(){
+        usernameString = username.getText().toString();
+        emailString = email.getText().toString();
 
         if(usernameString.equals("")){
             username.setError("Empty field!");
-            return;
+            return false;
         }
 
         if(emailString.equals("")){
             email.setError("Empty field!");
-            return;
+            return false;
         }
 
         if(!emailString.contains("@")){
             email.setError("Must be an email address!");
-            return;
+            return false;
         }
+
 
         if(!contactListController.isUsernameAvailable(usernameString)){
             username.setError("Username already taken!");
+            return false;
+        }
+
+        return true;
+    }
+
+    public void saveContact(View view) {
+        if(!validateInput()){
             return;
         }
 

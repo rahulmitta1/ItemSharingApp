@@ -2,26 +2,18 @@ package com.example.sharingapp;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class ContactList extends Observable {
     private ArrayList<Contact> contacts;
-    private String FILENAME = "contacts.sav";
-    private StorageHandler<Contact> storageHandler;
+    private final StorageHandler<Contact> storageHandler;
 
     public ContactList() {
-        this.contacts = new ArrayList<Contact>();
-        storageHandler = new StorageHandler<Contact>(FILENAME, new TypeToken<ArrayList<Contact>>() {}.getType());
+        this.contacts = new ArrayList<>();
+        String FILENAME = "contacts.sav";
+        storageHandler = new StorageHandler<>(FILENAME, new TypeToken<ArrayList<Contact>>() {}.getType());
     }
 
     public ArrayList<Contact> getContacts() {
@@ -34,7 +26,7 @@ public class ContactList extends Observable {
     }
 
     public ArrayList<String> getAllUsernames(){
-        ArrayList<String> usernames = new ArrayList<String>();
+        ArrayList<String> usernames = new ArrayList<>();
         for(Contact contact: contacts){
             usernames.add(contact.getUsername());
         }

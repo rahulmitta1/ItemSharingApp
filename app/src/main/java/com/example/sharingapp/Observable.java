@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Observable {
 
-    private ArrayList<Observer> observers = null;
+    private final ArrayList<Observer> observers;
 
     public Observable(){
-        observers = new ArrayList<Observer>();
+        observers = new ArrayList<>();
     }
 
     public void notifyObservers(){
@@ -21,8 +21,6 @@ public class Observable {
     }
 
     public void removeObserver(Observer observer){
-        if (observers.contains(observer)) {
-            observers.remove(observer);
-        }
+        observers.remove(observer);
     }
 }

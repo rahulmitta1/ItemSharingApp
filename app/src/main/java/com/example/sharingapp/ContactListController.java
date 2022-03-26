@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.ArrayList;
 
 public class ContactListController extends Observable {
-    private ContactList contactList;
+    private final ContactList contactList;
 
     public ContactListController(ContactList contactList) {
         this.contactList = contactList;

@@ -4,9 +4,9 @@ import android.content.Context;
 
 public class EditItemCommand extends Command {
     public ItemList itemList;
-    private Item oldItem;
-    private Item newItem;
-    private Context context;
+    private final Item oldItem;
+    private final Item newItem;
+    private final Context context;
 
     public EditItemCommand(ItemList itemList, Item oldItem, Item newItem, Context context) {
         this.itemList = itemList;

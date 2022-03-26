@@ -2,10 +2,8 @@ package com.example.sharingapp;
 
 import android.graphics.Bitmap;
 
-import androidx.annotation.Dimension;
-
 public class ItemController {
-    private Item item;
+    private final Item item;
 
     public ItemController(Item item){
         this.item = item;

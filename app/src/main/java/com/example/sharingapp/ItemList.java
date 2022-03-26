@@ -3,25 +3,17 @@ package com.example.sharingapp;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class ItemList extends Observable {
     private ArrayList<Item> items;
-    private String FILENAME = "items.sav";
-    private StorageHandler<Item> storageHandler;
+    private final StorageHandler<Item> storageHandler;
 
     public ItemList(){
         items = new ArrayList<>();
+        String FILENAME = "items.sav";
         storageHandler = new StorageHandler<>(FILENAME, new TypeToken<ArrayList<Item>>() {}.getType());
     }
 
@@ -84,7 +76,7 @@ public class ItemList extends Observable {
     }
 
     public ArrayList<Contact> getActiveBorrowers(){
-        ArrayList<Contact> activeBorrowers = new ArrayList<Contact>();
+        ArrayList<Contact> activeBorrowers = new ArrayList<>();
         for(Item i: items){
             Contact borrower = i.getBorrower();
             if(borrower != null){

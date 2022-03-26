@@ -6,18 +6,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 
 public abstract class ItemsFragment extends Fragment implements Observer {
-    private ItemList itemList = new ItemList();
+    private final ItemList itemList = new ItemList();
     ItemListController itemListController = new ItemListController(itemList);
 
     View rootView = null;
@@ -31,7 +29,7 @@ public abstract class ItemsFragment extends Fragment implements Observer {
     private boolean update = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
         itemListController.loadItems(context);
         update = true;
@@ -42,7 +40,7 @@ public abstract class ItemsFragment extends Fragment implements Observer {
 
     public void setVariables(int resource, int id){
         rootView = inflater.inflate(resource, container, false);
-        listView = (ListView) rootView.findViewById(id);
+        listView = rootView.findViewById(id);
         selectedItems = filterItems();
     }
 
@@ -54,22 +52,18 @@ public abstract class ItemsFragment extends Fragment implements Observer {
 
     public void setFragmentOnItemLongClickListener(){
         // When item is long clicked, this starts EditItemActivity
-        listView.setOnItemLongClickListener(new android.widget.AdapterView.OnItemLongClickListener() {
+        listView.setOnItemLongClickListener((parent, view, pos, id) -> {
 
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) {
+            Item item = adapter.getItem(pos);
 
-                Item item = adapter.getItem(pos);
+            int meta_pos = itemListController.getIndex(item);
+            if (meta_pos >= 0) {
 
-                int meta_pos = itemListController.getIndex(item);
-                if (meta_pos >= 0) {
-
-                    Intent edit = new Intent(context, EditItemActivity.class);
-                    edit.putExtra("position", meta_pos);
-                    startActivity(edit);
-                }
-                return true;
+                Intent edit = new Intent(context, EditItemActivity.class);
+                edit.putExtra("position", meta_pos);
+                startActivity(edit);
             }
+            return true;
         });
 
     }
@@ -80,19 +74,16 @@ public abstract class ItemsFragment extends Fragment implements Observer {
         adapter.notifyDataSetChanged();
 
         // When item is long clicked, this starts EditItemActivity
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+        listView.setOnItemLongClickListener((adapterView, view, position, l) -> {
 
-                Item item = adapter.getItem(position);
-                int meta_position = itemList.getIndex(item);
-                if(meta_position >= 0){
-                    Intent edit = new Intent(context, EditItemActivity.class);
-                    edit.putExtra("position", meta_position);
-                    startActivity(edit);
-                }
-                return true;
+            Item item = adapter.getItem(position);
+            int meta_position = itemList.getIndex(item);
+            if(meta_position >= 0){
+                Intent edit = new Intent(context, EditItemActivity.class);
+                edit.putExtra("position", meta_position);
+                startActivity(edit);
             }
+            return true;
         });
     }
 

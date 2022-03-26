@@ -2,6 +2,7 @@ package com.example.sharingapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,10 +30,10 @@ public class AddItemActivity extends AppCompatActivity {
 
     private ImageView photo;
     private Bitmap image;
-    private int REQUEST_CODE = 1;
+    private final int REQUEST_CODE = 1;
 
-    private ItemList item_list = new ItemList();
-    private ItemListController itemListController = new ItemListController(item_list);
+    private final ItemList item_list = new ItemList();
+    private final ItemListController itemListController = new ItemListController(item_list);
 
     private Context context;
 
@@ -41,13 +42,13 @@ public class AddItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-        title = (EditText) findViewById(R.id.title);
-        maker = (EditText) findViewById(R.id.maker);
-        description = (EditText) findViewById(R.id.description);
-        length = (EditText) findViewById(R.id.length);
-        width = (EditText) findViewById(R.id.width);
-        height = (EditText) findViewById(R.id.height);
-        photo = (ImageView) findViewById(R.id.image_view);
+        title = findViewById(R.id.title);
+        maker = findViewById(R.id.maker);
+        description = findViewById(R.id.description);
+        length = findViewById(R.id.length);
+        width = findViewById(R.id.width);
+        height = findViewById(R.id.height);
+        photo = findViewById(R.id.image_view);
 
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
 
@@ -55,6 +56,7 @@ public class AddItemActivity extends AppCompatActivity {
         itemListController.loadItems(context);
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     public void addPhoto(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {

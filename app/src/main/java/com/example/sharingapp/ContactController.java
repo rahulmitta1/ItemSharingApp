@@ -1,11 +1,7 @@
 package com.example.sharingapp;
 
-import android.graphics.Bitmap;
-
-import java.util.UUID;
-
 public class ContactController {
-    private Contact contact;
+    private final Contact contact;
 
     public ContactController(Contact contact){
         this.contact = contact;

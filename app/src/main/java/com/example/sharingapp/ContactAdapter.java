@@ -11,12 +11,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ContactAdapter extends ArrayAdapter<Contact> {
-    private LayoutInflater inflater;
-    private Context context;
+    private final LayoutInflater inflater;
 
     public ContactAdapter(Context context, ArrayList<Contact> contacts){
         super(context, 0, contacts);
-        this.context = context;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -29,12 +27,12 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         String email = "Email: " + contact.getEmail();
 
         if(convertView == null){
-            convertView = inflater.from(context).inflate(R.layout.contactlist_contact, parent, false);
+            convertView = inflater.inflate(R.layout.contactlist_contact, parent, false);
         }
 
-        TextView username_tv = (TextView) convertView.findViewById(R.id.username_tv);
-        TextView email_tv = (TextView) convertView.findViewById(R.id.email_tv);
-        ImageView photo = (ImageView) convertView.findViewById(R.id.contacts_image_view);
+        TextView username_tv = convertView.findViewById(R.id.username_tv);
+        TextView email_tv = convertView.findViewById(R.id.email_tv);
+        ImageView photo = convertView.findViewById(R.id.contacts_image_view);
 
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
 

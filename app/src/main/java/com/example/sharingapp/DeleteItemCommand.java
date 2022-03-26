@@ -4,8 +4,8 @@ import android.content.Context;
 
 public class DeleteItemCommand extends Command {
     public ItemList itemList;
-    private Item item;
-    private Context context;
+    private final Item item;
+    private final Context context;
 
     public DeleteItemCommand(ItemList itemList, Item item, Context context) {
         this.itemList = itemList;

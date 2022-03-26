@@ -1,12 +1,11 @@
 package com.example.sharingapp;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import java.util.ArrayList;
 
 public class ItemListController {
-    private ItemList item_list;
+    private final ItemList item_list;
 
     public ItemListController(ItemList item_list){
         this.item_list = item_list;

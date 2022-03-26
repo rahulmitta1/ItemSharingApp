@@ -6,11 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 public class EditContactActivity extends AppCompatActivity implements Observer {
-    private ContactList contactList = new ContactList();
+    private final ContactList contactList = new ContactList();
     private Contact contact;
 
     private Context context;
@@ -18,7 +17,7 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
     private EditText email;
     private boolean onCreateUpdate = false;
     private ContactController contactController;
-    private ContactListController contactListController = new ContactListController((contactList));
+    private final ContactListController contactListController = new ContactListController((contactList));
     private int pos;
 
     private String usernameString;
@@ -29,8 +28,8 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_contact);
 
-        username = (EditText) findViewById(R.id.username);
-        email = (EditText) findViewById(R.id.email);
+        username = findViewById(R.id.username);
+        email = findViewById(R.id.email);
 
         Intent intent = getIntent();
         pos = intent.getIntExtra("position", 0);

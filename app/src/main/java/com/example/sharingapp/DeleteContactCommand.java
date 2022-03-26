@@ -4,8 +4,8 @@ import android.content.Context;
 
 public class DeleteContactCommand extends Command {
     public ContactList contactList;
-    private Contact contact;
-    private Context context;
+    private final Contact contact;
+    private final Context context;
 
     public DeleteContactCommand(ContactList contactList, Contact contact, Context context) {
         this.contactList = contactList;

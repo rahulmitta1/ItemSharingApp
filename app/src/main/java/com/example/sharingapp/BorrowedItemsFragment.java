@@ -19,6 +19,8 @@ public class BorrowedItemsFragment extends ItemsFragment {
 
         super.onCreateView(inflater,container, savedInstanceState);
         super.setVariables(R.layout.borrowed_items_fragment, R.id.my_borrowed_items);
+        assert this.getArguments() != null;
+        super.setUserId(this.getArguments());
         super.loadItems(BorrowedItemsFragment.this);
         super.setFragmentOnItemLongClickListener();
 
@@ -27,6 +29,6 @@ public class BorrowedItemsFragment extends ItemsFragment {
 
     public ArrayList<Item> filterItems() {
         String status = "Borrowed";
-        return itemListController.filterItemsByStatus(status);
+        return itemListController.filterItems(user_id, status);
     }
 }

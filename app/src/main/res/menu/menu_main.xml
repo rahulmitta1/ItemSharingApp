@@ -2,7 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.sharingapp.MainActivity">
     <item
-        android:id="@+id/contacts"
-        android:title="@string/contacts" />
+        android:id="@+id/search"
+        android:title="@string/search" />
+
+    <item
+        android:id="@+id/borrowed_items"
+        android:title="@string/borrowed_items" />
+
+    <item
+        android:id="@+id/edit_profile"
+        android:title="@string/edit_profile" />
+
+    <item
+        android:id="@+id/logout"
+        android:title="@string/logout" />
+
 
 </menu>

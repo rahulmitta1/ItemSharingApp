@@ -55,6 +55,63 @@ public class ItemList extends Observable {
         return items.size();
     }
 
+    // Used by AvailableItemsFragment, BorrowedItemsFragment, and BiddedItemsFragment
+    public ArrayList<Item> filterItems(String user_id, String status) {
+        ArrayList<Item> selected_items = new ArrayList<>();
+        for (Item i: items) {
+            Log.i("owerner id", i.getOwnerId());
+            Log.i("status", i.getStatus());
+            if (i.getOwnerId().equals(user_id) && i.getStatus().equals(status)) {
+                selected_items.add(i);
+            }
+        }
+        return selected_items;
+    }
+
+    // Used by AllItemsFragment
+    public ArrayList<Item> getMyItems(String user_id) {
+        ArrayList<Item> selected_items = new ArrayList<>();
+        for (Item i: items) {
+            if (i.getOwnerId().equals(user_id)) {
+                selected_items.add(i);
+            }
+        }
+        return selected_items;
+    }
+
+    // Used by SearchItemsActivity
+    public ArrayList<Item> getSearchItems(String user_id) {
+        ArrayList<Item> selected_items = new ArrayList<>();
+        for (Item i: items) {
+            if (!i.getOwnerId().equals(user_id) && !i.getStatus().equals("Borrowed")) {
+                selected_items.add(i);
+            }
+        }
+        return selected_items;
+    }
+
+    // Used by BorrowedItemsActivity
+    public ArrayList<Item> getBorrowedItemsByUsername(String username) {
+        ArrayList<Item> selected_items = new ArrayList<>();
+        for (Item i: items) {
+            if (i != null && i.getBorrower() != null) {
+                if (i.getBorrowerUsername().equals(username)) {
+                    selected_items.add(i);
+                }
+            }
+        }
+        return selected_items;
+    }
+
+    public Item getItemById(String id){
+        for (Item i: items) {
+            if (i.getId().equals(id)) {
+                return i;
+            }
+        }
+        return null;
+    }
+
     public void loadItems(Context context){
         items = storageHandler.load(context);
         Log.i("items", items.toString());
@@ -65,24 +122,5 @@ public class ItemList extends Observable {
         return storageHandler.save(context, items);
     }
 
-    public ArrayList<Item> filterItemsByStatus(String status){
-        ArrayList<Item> selected_items = new ArrayList<>();
-        for(Item i: items){
-            if(i.getStatus().equals(status)){
-                selected_items.add(i);
-            }
-        }
-        return selected_items;
-    }
 
-    public ArrayList<Contact> getActiveBorrowers(){
-        ArrayList<Contact> activeBorrowers = new ArrayList<>();
-        for(Item i: items){
-            Contact borrower = i.getBorrower();
-            if(borrower != null){
-                activeBorrowers.add(borrower);
-            }
-        }
-        return  activeBorrowers;
-    }
 }

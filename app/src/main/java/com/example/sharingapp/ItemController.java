@@ -46,6 +46,24 @@ public class ItemController {
         item.setDimensions(dimension);
     }
 
+
+    public Float getMinBid() {
+        return item.getMinBid();
+    }
+
+    public void setMinBid(Float bid) {
+        item.setMinBid(bid);
+    }
+
+
+    public void setOwnerId(String owner_id) {
+        item.setOwnerId(owner_id);
+    }
+
+    public String getOwnerId() {
+        return item.getOwnerId();
+    }
+
     public String getLength() {
         return item.getDimensions().getLength();
     }
@@ -66,11 +84,11 @@ public class ItemController {
         return item.getStatus();
     }
 
-    public void setBorrower(Contact borrower) {
+    public void setBorrower(User borrower) {
         item.setBorrower(borrower);
     }
 
-    public Contact getBorrower() {
+    public User getBorrower() {
         return item.getBorrower();
     }
 

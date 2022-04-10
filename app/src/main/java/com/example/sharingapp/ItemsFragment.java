@@ -3,6 +3,7 @@ package com.example.sharingapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,9 @@ import java.util.ArrayList;
 public abstract class ItemsFragment extends Fragment implements Observer {
     private final ItemList itemList = new ItemList();
     ItemListController itemListController = new ItemListController(itemList);
+    View rootView;
+    String user_id;
 
-    View rootView = null;
     private ListView listView = null;
     private ArrayAdapter<Item> adapter = null;
     private ArrayList<Item> selectedItems;
@@ -50,6 +52,12 @@ public abstract class ItemsFragment extends Fragment implements Observer {
         itemListController.loadItems(context);
     }
 
+    public void setUserId(Bundle b) {
+
+        this.user_id = b.getString("user_id", user_id);
+        Log.i("user34", user_id);
+    }
+
     public void setFragmentOnItemLongClickListener(){
         // When item is long clicked, this starts EditItemActivity
         listView.setOnItemLongClickListener((parent, view, pos, id) -> {
@@ -60,6 +68,8 @@ public abstract class ItemsFragment extends Fragment implements Observer {
             if (meta_pos >= 0) {
 
                 Intent edit = new Intent(context, EditItemActivity.class);
+                Log.i("user314", user_id);
+                edit.putExtra("user_id", user_id);
                 edit.putExtra("position", meta_pos);
                 startActivity(edit);
             }
@@ -68,24 +78,6 @@ public abstract class ItemsFragment extends Fragment implements Observer {
 
     }
 
-    public void setAdapter(Fragment fragment){
-        adapter = new ItemAdapter(context, selectedItems, fragment);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-        // When item is long clicked, this starts EditItemActivity
-        listView.setOnItemLongClickListener((adapterView, view, position, l) -> {
-
-            Item item = adapter.getItem(position);
-            int meta_position = itemList.getIndex(item);
-            if(meta_position >= 0){
-                Intent edit = new Intent(context, EditItemActivity.class);
-                edit.putExtra("position", meta_position);
-                startActivity(edit);
-            }
-            return true;
-        });
-    }
 
     /**
      * filterItems is implemented independently by AvailableItemsFragment, BorrowedItemsFragment and AllItemsFragment
@@ -104,7 +96,8 @@ public abstract class ItemsFragment extends Fragment implements Observer {
      */
     public void update(){
         if (update) {
-            adapter = new ItemAdapter(context, selectedItems, fragment);
+            selectedItems = filterItems(); // Ensure items are filtered
+            adapter = new ItemFragmentAdapter(context, selectedItems, fragment);
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }

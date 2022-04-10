@@ -7,23 +7,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Editing a pre-existing item consists of deleting the old item and adding a new item with the old
  * item's id.
- * Note: invisible EditText is used to setError for status. For whatever reason we cannot .setError to
- * the status Switch so instead an error is set to an "invisible" EditText.
  */
 
-public class EditItemActivity extends AppCompatActivity implements Observer{
+public class EditItemActivity extends AppCompatActivity implements Observer {
 
     private final ItemList item_list = new ItemList();
     private final ItemListController itemListController = new ItemListController(item_list);
@@ -33,8 +33,8 @@ public class EditItemActivity extends AppCompatActivity implements Observer{
 
     private Context context;
 
-    private final ContactList contactList = new ContactList();
-    private final ContactListController contactListController = new ContactListController(contactList);
+    private final UserList userList = new UserList();
+    private final UserListController userListController = new UserListController(userList);
 
     private Bitmap image;
     private final int REQUEST_CODE = 1;
@@ -46,11 +46,19 @@ public class EditItemActivity extends AppCompatActivity implements Observer{
     private EditText length;
     private EditText width;
     private EditText height;
-    private Spinner borrower_spinner;
-    private TextView borrower_tv;
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private Switch status;
-    private EditText invisible;
+    private EditText minimum_bid;
+
+    private TextView borrower_left_tv;
+    private TextView borrower_right_tv;
+    private TextView status_right_tv;
+
+    private Button save_button;
+    private Button view_bids_button;
+    private Button contact_info_button;
+    private Button delete_button;
+    private Button set_available_button;
+    private ImageButton add_image_button;
+    private ImageButton delete_image_button;
 
     private String title_str;
     private String maker_str;
@@ -58,6 +66,10 @@ public class EditItemActivity extends AppCompatActivity implements Observer{
     private String length_str;
     private String width_str;
     private String height_str;
+    private String user_id;
+    private String minimum_bid_str;
+    private String status_str;
+    private String borrower_username_str;
 
 
     private boolean onCreateUpdate = false;
@@ -74,37 +86,51 @@ public class EditItemActivity extends AppCompatActivity implements Observer{
         length = findViewById(R.id.length);
         width = findViewById(R.id.width);
         height = findViewById(R.id.height);
-        borrower_spinner = findViewById(R.id.borrower_spinner);
-        borrower_tv = findViewById(R.id.borrower_tv);
-        photo = findViewById(R.id.image_view);
-        status = findViewById(R.id.available_switch);
-        invisible = findViewById(R.id.invisible);
 
-        invisible.setVisibility(View.GONE);
+        status_right_tv = (TextView) findViewById(R.id.status_right_tv);
+        minimum_bid = (EditText) findViewById(R.id.minimum_bid);                    // initially GONE
+        borrower_left_tv = (TextView) findViewById(R.id.borrower_left_tv);          // initially GONE
+        borrower_right_tv = (TextView) findViewById(R.id.borrower_right_tv);        // initially GONE
+
+        photo = findViewById(R.id.image_view);
+
+        add_image_button = (ImageButton) findViewById(R.id.add_image_button);       // initially GONE
+        delete_image_button = (ImageButton) findViewById(R.id.cancel_image_button); // initially GONE
+        delete_button = (Button) findViewById(R.id.delete_item);                    // initially GONE
+        save_button = (Button) findViewById(R.id.save_button);                      // initially GONE
+        view_bids_button = (Button) findViewById(R.id.view_bids_button);            // initially GONE
+        set_available_button = (Button) findViewById(R.id.set_available_button);    // initially GONE
+        contact_info_button = (Button) findViewById(R.id.contact_info_button);      // initially GONE
+
 
         Intent intent = getIntent(); // Get intent from ItemsFragment
         pos = intent.getIntExtra("position", 0);
+        user_id = intent.getStringExtra("user_id");
+        Log.i("user_id", user_id);
 
         context = getApplicationContext();
 
+        onCreateUpdate = false;
         itemListController.addObserver(this);
         itemListController.loadItems(context);
 
         onCreateUpdate = true;
 
-        contactListController.addObserver(this);
-        contactListController.loadContacts(context);
+        userListController.addObserver(this);
+        userListController.loadUsers(context); // Call to update occurs
 
         onCreateUpdate = false;
     }
 
-    public boolean validateInput(){
+    public boolean validateInput() {
         title_str = title.getText().toString();
         maker_str = maker.getText().toString();
         description_str = description.getText().toString();
         length_str = length.getText().toString();
         width_str = width.getText().toString();
         height_str = height.getText().toString();
+        status_str = itemController.getStatus();
+        minimum_bid_str = minimum_bid.getText().toString();
 
         if (title_str.equals("")) {
             title.setError("Empty field!");
@@ -136,58 +162,65 @@ public class EditItemActivity extends AppCompatActivity implements Observer{
             return false;
         }
 
+        if (Float.parseFloat(minimum_bid_str) <= 0) {
+            minimum_bid.setError("Starting bid must be above 0!");
+            return false;
+        }
+
         return true;
     }
 
     public void saveItem(View view) {
 
-        if(!validateInput()){
+        if (!validateInput()) {
             return;
         }
 
-        Contact contact = null;
-        if (!status.isChecked()) {
-            String borrowerString = borrower_spinner.getSelectedItem().toString();
-            contact = contactListController.getContactByUsername(borrowerString);
-        }
+        String item_id = itemController.getId(); // Reuse the item id
 
-        String id = itemController.getId(); // Reuse the item id
-
-        Item updated_item = new Item(title_str, maker_str, description_str, image, id);
+        Item updated_item = new Item(title_str, maker_str, description_str, user_id, minimum_bid_str, image, item_id);
 
         ItemController updatedItemController = new ItemController(updated_item);
         updatedItemController.setDimensions(length_str, width_str, height_str);
 
-
-        boolean checked = status.isChecked();
-        if (!checked) {
-            updatedItemController.setStatus("Borrowed");
-            updatedItemController.setBorrower(contact);
-        }
+        updatedItemController.setStatus(status_str);
 
         boolean success = itemListController.editItem(item, updated_item, context);
-        if(!success) return;
+        if (!success) return;
+
+        itemListController.removeObserver(this);
+        userListController.removeObserver(this);
 
         // End EditItemActivity
-        itemListController.removeObserver(this);
-        Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("user_id", user_id);
+        Toast.makeText(context, "Item saved.", Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
 
     public void deleteItem(View view) {
         boolean success = itemListController.deleteItem(item, context);
-        if(!success) return;
+        if (!success) return;
 
         // End EditItemActivity
 
         itemListController.removeObserver(this);
+        userListController.removeObserver(this);
+
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        intent.putExtra("user_id", user_id);
+
+        // Delay launch of new activity to allow server more time to process request
+        new Handler().postDelayed(() -> {
+            Toast.makeText(context, "Item removed.", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }, 750);
     }
 
     public void deletePhoto(View view) {
         image = null;
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
+        Toast.makeText(context, "Photo removed.", Toast.LENGTH_SHORT).show();
     }
 
     public void addPhoto(View view) {
@@ -197,84 +230,128 @@ public class EditItemActivity extends AppCompatActivity implements Observer{
         }
     }
 
+    public void viewUserActivity(View view) {
+        userListController.removeObserver(this);
+        itemListController.removeObserver(this);
+
+        Intent intent = new Intent(this, ViewUserActivity.class);
+        intent.putExtra("borrower_username_str", borrower_username_str);
+        startActivity(intent);
+    }
+
     @SuppressLint("MissingSuperCall")
     @Override
-    protected void onActivityResult(int request_code, int result_code, Intent intent){
-        if (request_code == REQUEST_CODE && result_code == RESULT_OK){
+    protected void onActivityResult(int request_code, int result_code, Intent intent) {
+        if (request_code == REQUEST_CODE && result_code == RESULT_OK) {
             Bundle extras = intent.getExtras();
             image = (Bitmap) extras.get("data");
             photo.setImageBitmap(image);
-        }
-    }
-
-    /**
-     * Checked = Available
-     * Unchecked = Borrowed
-     */
-    public void toggleSwitch(View view) {
-        if (status.isChecked()) {
-            // Means was previously borrowed
-            borrower_spinner.setVisibility(View.GONE);
-            borrower_tv.setVisibility(View.GONE);
-            itemController.setBorrower(null);
-            itemController.setStatus("Available");
-
-        } else {
-            // Means not borrowed
-            if(contactList.getSize() == 0){
-                // No contacts, need to add contacts to be able to add a borrower
-
-                invisible.setVisibility(View.VISIBLE);
-                invisible.requestFocus();
-                invisible.setError("No contacts available! Must add borrower to contacts");
-                status.setChecked(true); // Set switch to available
-            }else{
-                borrower_spinner.setVisibility(View.VISIBLE);
-                borrower_tv.setVisibility(View.VISIBLE);
-            }
-
+            Toast.makeText(context, "Photo added.", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void update() {
-        if(!onCreateUpdate) return;
+        if (!onCreateUpdate) return;
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
-                contactListController.getAllUsernames());
-            borrower_spinner.setAdapter(adapter);
 
-            item = itemListController.getItem(pos);
-            itemController = new ItemController(item);
+        item = itemListController.getItem(pos);
+        itemController = new ItemController(item);
 
-            Contact contact = itemController.getBorrower();
-            if (contact != null){
-                int contact_pos = contactListController.getIndex(contact);
-                borrower_spinner.setSelection(contact_pos);
-            }
+        title.setText(itemController.getTitle());
+        maker.setText(itemController.getMaker());
+        description.setText(itemController.getDescription());
 
-            title.setText(itemController.getTitle());
-            maker.setText(itemController.getMaker());
-            description.setText(itemController.getDescription());
+        length.setText(itemController.getLength());
+        width.setText(itemController.getWidth());
+        height.setText(itemController.getHeight());
 
-            length.setText(itemController.getLength());
-            width.setText(itemController.getWidth());
-            height.setText(itemController.getHeight());
+        status_str = itemController.getStatus();
+        status_right_tv.setText(status_str);
 
-            String status_str = itemController.getStatus();
-            if (status_str.equals("Borrowed")) {
-                status.setChecked(false);
-            } else {
-                borrower_tv.setVisibility(View.GONE);
-                borrower_spinner.setVisibility(View.GONE);
-            }
+        minimum_bid_str = itemController.getMinBid().toString();
+        minimum_bid.setText(minimum_bid_str);
 
-            image = itemController.getImage();
-            if (image != null) {
-                photo.setImageBitmap(image);
-            } else {
-                photo.setImageResource(android.R.drawable.ic_menu_gallery);
-            }
 
+        image = itemController.getImage();
+        if (image != null) {
+            photo.setImageBitmap(image);
+        } else {
+            photo.setImageResource(android.R.drawable.ic_menu_gallery);
+        }
+
+        // AVAILABLE
+        if (status_str.equals("Available")) {
+
+            title.setEnabled(true);
+            maker.setEnabled(true);
+            description.setEnabled(true);
+            length.setEnabled(true);
+            width.setEnabled(true);
+            height.setEnabled(true);
+            minimum_bid.setEnabled(true);
+
+            add_image_button.setVisibility(View.VISIBLE);
+            delete_image_button.setVisibility(View.VISIBLE);
+            delete_button.setVisibility(View.VISIBLE);
+            save_button.setVisibility(View.VISIBLE);
+        }
+
+        // BIDDED
+        if (status_str.equals("Bidded")) {
+
+            view_bids_button.setVisibility(View.VISIBLE);
+            title.setEnabled(false);
+            maker.setEnabled(false);
+            description.setEnabled(false);
+            length.setEnabled(false);
+            width.setEnabled(false);
+            height.setEnabled(false);
+            minimum_bid.setEnabled(false);
+        }
+
+        // BORROWED
+        if (status_str.equals("Borrowed")) {
+
+            title.setEnabled(false);
+            maker.setEnabled(false);
+            description.setEnabled(false);
+            length.setEnabled(false);
+            width.setEnabled(false);
+            height.setEnabled(false);
+            minimum_bid.setEnabled(false);
+
+            borrower_left_tv.setVisibility(View.VISIBLE);
+            borrower_right_tv.setVisibility(View.VISIBLE);
+            contact_info_button.setVisibility(View.VISIBLE);
+            set_available_button.setVisibility(View.VISIBLE);
+
+            User borrower = itemController.getBorrower();
+            borrower_username_str = borrower.getUsername();
+            borrower_right_tv.setText(borrower_username_str);
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent main_intent = new Intent(this, MainActivity.class);
+        main_intent.putExtra("user_id", user_id);
+        startActivity(main_intent);
+    }
+
+    public void viewBids(View view) {
+        userListController.removeObserver(this);
+        itemListController.removeObserver(this);
+
+        Intent intent = new Intent(this, ViewItemBidsActivity.class);
+        intent.putExtra("user_id", user_id);
+        intent.putExtra("item_id", itemController.getId());
+        startActivity(intent);
+    }
+
+    public void setAvailable(View view) {
+        itemController.setStatus("Available"); // Update status
+        saveItem(view); // Must save the item so that the change in status is saved
     }
 }

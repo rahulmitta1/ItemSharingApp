@@ -1,9 +1,9 @@
 package com.example.sharingapp;
 
 public class Dimensions {
-    private String length;
-    private String width;
-    private String height;
+    private final String length;
+    private final String width;
+    private final String height;
 
     public Dimensions(String length, String width, String height) {
         this.length = length;
@@ -21,15 +21,5 @@ public class Dimensions {
 
     public String getHeight() {
         return height;
-    }
-
-    public String getDimensions() {
-        return length + " x " + width + " x " + height;
-    }
-
-    public void setDimensions(String length, String width, String height) {
-        this.length = length;
-        this.width = width;
-        this.height = height;
     }
 }

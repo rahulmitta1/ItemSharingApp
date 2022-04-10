@@ -49,6 +49,30 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/bidder_tv"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:hint="@string/bidder"/>
+
+            <TextView
+                android:id="@+id/highest_bid_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:hint="@string/current_bid_hint"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

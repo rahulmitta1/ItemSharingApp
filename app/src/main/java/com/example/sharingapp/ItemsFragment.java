@@ -33,7 +33,7 @@ public abstract class ItemsFragment extends Fragment implements Observer {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
-        itemListController.loadItems(context);
+        itemListController.getRemoteItems();
         update = true;
         this.inflater = inflater;
         this.container = container;
@@ -49,7 +49,7 @@ public abstract class ItemsFragment extends Fragment implements Observer {
     public  void loadItems(Fragment fragment){
         this.fragment = fragment;
         itemListController.addObserver(this);
-        itemListController.loadItems(context);
+        itemListController.getRemoteItems();
     }
 
     public void setUserId(Bundle b) {

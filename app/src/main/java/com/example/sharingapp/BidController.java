@@ -10,32 +10,8 @@ public class BidController {
         this.bid = bid;
     }
 
-    public String getBidId() {
-        return bid.getBidId();
-    }
-
-    public void setBidId() {
-        bid.setBidId();
-    }
-
-    public String getItemId() {
-        return bid.getItemId();
-    }
-
-    public void setItemId(String item_id) {
-        bid.setItemId(item_id);
-    }
-
-    public void setBidAmount(float bid_amount) {
-        bid.setBidAmount(bid_amount);
-    }
-
     public Float getBidAmount() {
         return bid.getBidAmount();
-    }
-
-    public void setBidderUsername(String bidder_username) {
-        bid.setBidderUsername(bidder_username);
     }
 
     public String getBidderUsername() {

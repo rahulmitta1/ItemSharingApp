@@ -45,13 +45,13 @@ public class ViewItemBidsActivity extends AppCompatActivity implements Observer 
 
         context = getApplicationContext();
 
-        bid_list_controller.loadBids(context);
+        bid_list_controller.getRemoteBids();
         bid_list_controller.addObserver(this);
         item_bid_list = bid_list_controller.getItemBids(item_id);
 
         item_list_controller.addObserver(this);
-        item_list_controller.loadItems(context);
-        user_list_controller.loadUsers(context);
+        item_list_controller.getRemoteItems();
+        user_list_controller.getRemoteUsers();
     }
 
     public void acceptBid(View view) {
@@ -83,13 +83,13 @@ public class ViewItemBidsActivity extends AppCompatActivity implements Observer 
         updatedItemController.setStatus(status);
         updatedItemController.setBorrower(borrower);
 
-        boolean success = item_list_controller.editItem(item, updated_item, context);
+        boolean success = item_list_controller.editItem(item, updated_item);
         if (!success){
             return;
         }
 
         // Delete all bids related to that item.
-        success =  bid_list_controller.removeItemBids(item_id, context);
+        success =  bid_list_controller.removeItemBids(item_id);
         if (!success){
             return;
         }
@@ -124,7 +124,7 @@ public class ViewItemBidsActivity extends AppCompatActivity implements Observer 
         String status = item_controller.getStatus();
 
         // Delete selected bid.
-        boolean success = bid_list_controller.removeBid(bid, context);
+        boolean success = bid_list_controller.removeBid(bid);
         if (!success) {
             return;
         }
@@ -141,7 +141,7 @@ public class ViewItemBidsActivity extends AppCompatActivity implements Observer 
         updated_item_controller.setDimensions(length, width, height);
         updated_item_controller.setStatus(status);
 
-        success = item_list_controller.editItem(item, updated_item, context);
+        success = item_list_controller.editItem(item, updated_item);
         if (!success) {
             return;
         }
@@ -182,13 +182,13 @@ public class ViewItemBidsActivity extends AppCompatActivity implements Observer 
         updatedItemController.setDimensions(length, width, height);
         updatedItemController.setStatus(status);
 
-        boolean success = item_list_controller.editItem(item, updated_item, context);
+        boolean success = item_list_controller.editItem(item, updated_item);
         if (!success){
             return;
         }
 
         // Delete all bids related to that item.
-        success =  bid_list_controller.removeItemBids(item_id, context);
+        success =  bid_list_controller.removeItemBids(item_id);
         if (!success){
             return;
         }
@@ -207,7 +207,7 @@ public class ViewItemBidsActivity extends AppCompatActivity implements Observer 
      * Update the view
      */
     public void update() {
-        item_bids = (ListView) findViewById(R.id.item_bids);
+        item_bids = findViewById(R.id.item_bids);
         adapter = new BidAdapter(this, item_bid_list);
         item_bids.setAdapter(adapter);
         adapter.notifyDataSetChanged();

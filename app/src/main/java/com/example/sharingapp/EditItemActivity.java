@@ -87,20 +87,20 @@ public class EditItemActivity extends AppCompatActivity implements Observer {
         width = findViewById(R.id.width);
         height = findViewById(R.id.height);
 
-        status_right_tv = (TextView) findViewById(R.id.status_right_tv);
-        minimum_bid = (EditText) findViewById(R.id.minimum_bid);                    // initially GONE
-        borrower_left_tv = (TextView) findViewById(R.id.borrower_left_tv);          // initially GONE
-        borrower_right_tv = (TextView) findViewById(R.id.borrower_right_tv);        // initially GONE
+        status_right_tv = findViewById(R.id.status_right_tv);
+        minimum_bid =  findViewById(R.id.minimum_bid);                    // initially GONE
+        borrower_left_tv =  findViewById(R.id.borrower_left_tv);          // initially GONE
+        borrower_right_tv =  findViewById(R.id.borrower_right_tv);        // initially GONE
 
         photo = findViewById(R.id.image_view);
 
-        add_image_button = (ImageButton) findViewById(R.id.add_image_button);       // initially GONE
-        delete_image_button = (ImageButton) findViewById(R.id.cancel_image_button); // initially GONE
-        delete_button = (Button) findViewById(R.id.delete_item);                    // initially GONE
-        save_button = (Button) findViewById(R.id.save_button);                      // initially GONE
-        view_bids_button = (Button) findViewById(R.id.view_bids_button);            // initially GONE
-        set_available_button = (Button) findViewById(R.id.set_available_button);    // initially GONE
-        contact_info_button = (Button) findViewById(R.id.contact_info_button);      // initially GONE
+        add_image_button = findViewById(R.id.add_image_button);       // initially GONE
+        delete_image_button = findViewById(R.id.cancel_image_button); // initially GONE
+        delete_button =  findViewById(R.id.delete_item);                    // initially GONE
+        save_button =  findViewById(R.id.save_button);                      // initially GONE
+        view_bids_button = findViewById(R.id.view_bids_button);            // initially GONE
+        set_available_button =  findViewById(R.id.set_available_button);    // initially GONE
+        contact_info_button =  findViewById(R.id.contact_info_button);      // initially GONE
 
 
         Intent intent = getIntent(); // Get intent from ItemsFragment
@@ -112,12 +112,12 @@ public class EditItemActivity extends AppCompatActivity implements Observer {
 
         onCreateUpdate = false;
         itemListController.addObserver(this);
-        itemListController.loadItems(context);
+        itemListController.getRemoteItems();
 
         onCreateUpdate = true;
 
         userListController.addObserver(this);
-        userListController.loadUsers(context); // Call to update occurs
+        userListController.getRemoteUsers(); // Call to update occurs
 
         onCreateUpdate = false;
     }
@@ -185,7 +185,7 @@ public class EditItemActivity extends AppCompatActivity implements Observer {
 
         updatedItemController.setStatus(status_str);
 
-        boolean success = itemListController.editItem(item, updated_item, context);
+        boolean success = itemListController.editItem(item, updated_item);
         if (!success) return;
 
         itemListController.removeObserver(this);
@@ -194,12 +194,16 @@ public class EditItemActivity extends AppCompatActivity implements Observer {
         // End EditItemActivity
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("user_id", user_id);
-        Toast.makeText(context, "Item saved.", Toast.LENGTH_SHORT).show();
-        startActivity(intent);
+
+        // Delay launch of MainActivity to allow server enough time to process request
+        new Handler().postDelayed(() -> {
+            Toast.makeText(context, "Item saved.", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }, 750);
     }
 
     public void deleteItem(View view) {
-        boolean success = itemListController.deleteItem(item, context);
+        boolean success = itemListController.deleteItem(item);
         if (!success) return;
 
         // End EditItemActivity

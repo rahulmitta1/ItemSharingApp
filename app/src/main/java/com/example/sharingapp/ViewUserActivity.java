@@ -19,8 +19,8 @@ public class ViewUserActivity extends AppCompatActivity {
         Intent intent = getIntent(); // Get intent from EditItemActivity
         String username_str = intent.getStringExtra("borrower_username_str");
 
-        TextView username = (TextView) findViewById(R.id.username_right_tv);
-        TextView email = (TextView) findViewById(R.id.email_right_tv);
+        TextView username = findViewById(R.id.username_right_tv);
+        TextView email = findViewById(R.id.email_right_tv);
 
         Context context = getApplicationContext();
         user_list_controller.loadUsers(context);

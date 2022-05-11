@@ -40,12 +40,12 @@ public class ItemFragmentAdapter extends ArrayAdapter<Item> {
             convertView = inflater.inflate(R.layout.itemlist_item, parent, false);
         }
 
-        TextView title_tv = (TextView) convertView.findViewById(R.id.title_tv);
-        TextView status_tv = (TextView) convertView.findViewById(R.id.status_tv);
-        TextView description_tv = (TextView) convertView.findViewById(R.id.description_tv);
-        ImageView photo = (ImageView) convertView.findViewById(R.id.image_view);
-        TextView bidder_tv = (TextView) convertView.findViewById(R.id.bidder_tv);
-        TextView highest_bid_tv = (TextView) convertView.findViewById(R.id.highest_bid_tv);
+        TextView title_tv = convertView.findViewById(R.id.title_tv);
+        TextView status_tv = convertView.findViewById(R.id.status_tv);
+        TextView description_tv = convertView.findViewById(R.id.description_tv);
+        ImageView photo = convertView.findViewById(R.id.image_view);
+        TextView bidder_tv = convertView.findViewById(R.id.bidder_tv);
+        TextView highest_bid_tv = convertView.findViewById(R.id.highest_bid_tv);
 
         if (thumbnail != null) {
             photo.setImageBitmap(thumbnail);
@@ -71,7 +71,7 @@ public class ItemFragmentAdapter extends ArrayAdapter<Item> {
         if (fragment instanceof BiddedItemsFragment) {
             BidList bid_list = new BidList();
             BidListController bid_list_controller = new BidListController(bid_list);
-            bid_list_controller.loadBids(parent.getContext());
+            bid_list_controller.getRemoteBids();
 
             String bidder = "Bidder: " + bid_list_controller.getHighestBidder(item_controller.getId());
             String highest_bid = "Highest Bid: " + bid_list_controller.getHighestBid(item_controller.getId());

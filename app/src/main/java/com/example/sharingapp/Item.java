@@ -10,13 +10,13 @@ import java.util.UUID;
 
 public class Item extends Observable {
     private String title;
-    private String maker;
+    private final String maker;
     private String description;
     private Dimensions dimensions;
     private String status;
-    private Float minimum_bid;
+    private final Float minimum_bid;
     private User borrower;
-    private String owner_id;
+    private final String owner_id;
     protected transient Bitmap image;
     protected String image_base64;
     private String id;
@@ -61,11 +61,6 @@ public class Item extends Observable {
         return title;
     }
 
-    public void setMaker(String maker) {
-        this.maker = maker;
-        notifyObservers();
-    }
-
     public String getMaker() {
         return maker;
     }
@@ -92,23 +87,9 @@ public class Item extends Observable {
         return this.minimum_bid;
     }
 
-    public void setMinBid(Float minimum_bid) {
-        this.minimum_bid = minimum_bid;
-        notifyObservers();
-    }
-
-    public void setOwnerId(String owner_id) {
-        this.owner_id = owner_id;
-        notifyObservers();
-    }
-
 
     public String getOwnerId() {
         return owner_id;
-    }
-
-    public String getLength(){
-        return dimensions.getLength();
     }
 
     public String getWidth(){

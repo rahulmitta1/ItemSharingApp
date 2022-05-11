@@ -15,9 +15,6 @@ public class UserController {
         return user.getId();
     }
 
-    public void setId() {
-        user.setId();
-    }
 
     public String getUsername() {
         return user.getUsername();
@@ -29,10 +26,6 @@ public class UserController {
 
     public String getEmail() {
         return user.getEmail();
-    }
-
-    public void setEmail(String email) {
-        user.setEmail(email);
     }
 
     public User getUser() {return this.user;}

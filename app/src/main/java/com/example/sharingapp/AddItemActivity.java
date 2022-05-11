@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -57,12 +58,12 @@ public class AddItemActivity extends AppCompatActivity {
         width = findViewById(R.id.width);
         height = findViewById(R.id.height);
         photo = findViewById(R.id.image_view);
-        min_bid = (EditText) findViewById(R.id.minimum_bid);
+        min_bid = findViewById(R.id.minimum_bid);
 
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
 
         context = getApplicationContext();
-        itemListController.loadItems(context);
+        itemListController.getRemoteItems();
     }
 
     @SuppressLint("QueryPermissionsNeeded")
@@ -142,14 +143,19 @@ public class AddItemActivity extends AppCompatActivity {
         ItemController itemController = new ItemController(item);
         itemController.setDimensions(length_str, width_str, height_str);
 
-        boolean success = itemListController.addItem(item, context);
+        boolean success = itemListController.addItem(item);
         if(!success) return;
 
         // End AddItemActivity
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("user_id", user_id);
-        Toast.makeText(context, "Item created.", Toast.LENGTH_SHORT).show();
-        startActivity(intent);
+
+
+        // Delay launch of new activity to allow server more time to process request
+        new Handler().postDelayed(() -> {
+            Toast.makeText(context, "Item created.", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }, 750);
     }
 
 

@@ -34,8 +34,8 @@ public class BidAdapter extends ArrayAdapter<Bid> {
             convertView = inflater.inflate(R.layout.bidlist_bid, parent, false);
         }
 
-        TextView bidder_tv = (TextView) convertView.findViewById(R.id.bidder_tv);
-        TextView bid_amount_tv = (TextView) convertView.findViewById(R.id.bid_amount_tv);
+        TextView bidder_tv =  convertView.findViewById(R.id.bidder_tv);
+        TextView bid_amount_tv = convertView.findViewById(R.id.bid_amount_tv);
 
         bidder_tv.setText(bidder);
         bid_amount_tv.setText(bid_amount);

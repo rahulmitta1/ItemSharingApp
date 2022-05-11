@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,20 +65,20 @@ public class ViewItemActivity extends AppCompatActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_item);
 
-        title_tv = (TextView) findViewById(R.id.title_right_tv);
-        maker_tv = (TextView) findViewById(R.id.maker_right_tv);
-        description_tv = (TextView) findViewById(R.id.description_right_tv);
-        length_tv = (TextView) findViewById(R.id.length_tv);
-        width_tv = (TextView) findViewById(R.id.width_tv);
-        height_tv = (TextView) findViewById(R.id.height_tv);
-        photo = (ImageView) findViewById(R.id.image_view);
-        current_bid_right_tv = (TextView) findViewById(R.id.current_bid_right_tv);
-        current_bid_left_tv = (TextView) findViewById(R.id.current_bid_left_tv);
+        title_tv =  findViewById(R.id.title_right_tv);
+        maker_tv =  findViewById(R.id.maker_right_tv);
+        description_tv = findViewById(R.id.description_right_tv);
+        length_tv =  findViewById(R.id.length_tv);
+        width_tv =  findViewById(R.id.width_tv);
+        height_tv =  findViewById(R.id.height_tv);
+        photo =  findViewById(R.id.image_view);
+        current_bid_right_tv =  findViewById(R.id.current_bid_right_tv);
+        current_bid_left_tv =  findViewById(R.id.current_bid_left_tv);
 
-        bid_amount = (EditText) findViewById(R.id.bid_amount);
+        bid_amount =  findViewById(R.id.bid_amount);
 
-        save_bid_button = (Button) findViewById(R.id.save_bid_button);
-        return_item_button = (Button) findViewById(R.id.return_item_button);
+        save_bid_button =  findViewById(R.id.save_bid_button);
+        return_item_button = findViewById(R.id.return_item_button);
 
         Intent intent = getIntent(); // Get intent from BorrowedItemsActivity/SearchActivity
         item_id = intent.getStringExtra("item_id");
@@ -86,13 +87,13 @@ public class ViewItemActivity extends AppCompatActivity implements Observer {
         context = getApplicationContext();
 
         on_create_update = false; // Suppress first call to update()
-        user_list_controller.loadUsers(context);
+        user_list_controller.getRemoteUsers();
 
         on_create_update = true; // First call to update occurs now
-        bid_list_controller.loadBids(context);
+        bid_list_controller.getRemoteBids();
         bid_list_controller.addObserver(this);
         item_list_controller.addObserver(this);
-        item_list_controller.loadItems(context);
+        item_list_controller.getRemoteItems();
 
         on_create_update = false; // Suppress any further calls to update()
     }
@@ -125,7 +126,7 @@ public class ViewItemActivity extends AppCompatActivity implements Observer {
 
         Bid bid = new Bid(item_id, new_bid_amount, username);
 
-        boolean success = bid_list_controller.addBid(bid, context);
+        boolean success = bid_list_controller.addBid(bid);
         if (!success){
             return;
         }
@@ -138,7 +139,7 @@ public class ViewItemActivity extends AppCompatActivity implements Observer {
         updated_item_controller.setStatus(status_str);
         updated_item_controller.setDimensions(length_str, width_str, height_str);
 
-        success = item_list_controller.editItem(item, updated_item, context);
+        success = item_list_controller.editItem(item, updated_item);
         if (!success){
             return;
         }
@@ -179,10 +180,10 @@ public class ViewItemActivity extends AppCompatActivity implements Observer {
             if (status.equals("Available") || status.equals("Bidded")) {
                 Float highest_bid = bid_list_controller.getHighestBid(item_id);
 
-                if (highest_bid == null) {
-                    current_bid_right_tv.setText(item_controller.getMinBid().toString());
-                } else {
-                    current_bid_right_tv.setText(highest_bid.toString());
+                if (highest_bid == null)
+                    current_bid_right_tv.setText(String.format("", item_controller.getMinBid()));
+                else {
+                    current_bid_right_tv.setText(String.format("", highest_bid));
                 }
             } else { // Borrowed
                 current_bid_right_tv.setVisibility(View.GONE);
@@ -212,7 +213,7 @@ public class ViewItemActivity extends AppCompatActivity implements Observer {
         updated_item_controller.setDimensions(length_str, width_str, height_str);
         updated_item_controller.setStatus(status);
 
-        boolean success = item_list_controller.editItem(item, updated_item, context);
+        boolean success = item_list_controller.editItem(item, updated_item);
         if (!success){
             return;
         }
@@ -224,8 +225,11 @@ public class ViewItemActivity extends AppCompatActivity implements Observer {
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("user_id", user_id);
 
-        Toast.makeText(context, "Item returned.", Toast.LENGTH_SHORT).show();
-        startActivity(intent);
+        // Delay launch of MainActivity to allow server enough time to process request
+        new Handler().postDelayed(() -> {
+            Toast.makeText(context, "Item returned.", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }, 750);
     }
 
     public boolean validateInput(){

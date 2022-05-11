@@ -13,20 +13,12 @@ public class ItemController {
         return item.getId();
     }
 
-    public void setId() {
-        item.setId();
-    }
-
     public void setTitle(String title) {
         item.setTitle(title);
     }
 
     public String getTitle() {
         return item.getTitle();
-    }
-
-    public void setMaker(String maker) {
-        item.setMaker(maker);
     }
 
     public String getMaker() {
@@ -51,14 +43,6 @@ public class ItemController {
         return item.getMinBid();
     }
 
-    public void setMinBid(Float bid) {
-        item.setMinBid(bid);
-    }
-
-
-    public void setOwnerId(String owner_id) {
-        item.setOwnerId(owner_id);
-    }
 
     public String getOwnerId() {
         return item.getOwnerId();
@@ -90,10 +74,6 @@ public class ItemController {
 
     public User getBorrower() {
         return item.getBorrower();
-    }
-
-    public void addImage(Bitmap new_image){
-        item.addImage(new_image);
     }
 
     public Bitmap getImage(){

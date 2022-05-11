@@ -15,6 +15,7 @@ public class AllItemsFragment extends ItemsFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         super.onCreateView(inflater,container, savedInstanceState);
+        assert this.getArguments() != null;
         super.setUserId(this.getArguments());
         super.setVariables(R.layout.all_items_fragment, R.id.my_items);
         super.loadItems(AllItemsFragment.this);

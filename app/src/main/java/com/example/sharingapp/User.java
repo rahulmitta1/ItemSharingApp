@@ -7,7 +7,7 @@ import java.util.UUID;
  */
 public class User extends Observable {
     private String username;
-    private String email;
+    private final String email;
     private String id;
 
     User(String username, String email, String id) {
@@ -48,9 +48,5 @@ public class User extends Observable {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email= email;
-        notifyObservers();
-    }
 }
 

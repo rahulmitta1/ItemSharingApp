@@ -1,7 +1,5 @@
 package com.example.sharingapp;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 
 public class ItemListController {
@@ -24,20 +22,20 @@ public class ItemListController {
     }
 
 
-    public boolean addItem(Item item, Context context){
-        AddItemCommand add_item_command = new AddItemCommand(item_list, item, context);
+    public boolean addItem(Item item){
+        AddItemCommand add_item_command = new AddItemCommand(item);
         add_item_command.execute();
         return add_item_command.isExecuted();
     }
 
-    public boolean deleteItem(Item item, Context context) {
-        DeleteItemCommand delete_item_command = new DeleteItemCommand(item_list, item, context);
+    public boolean deleteItem(Item item) {
+        DeleteItemCommand delete_item_command = new DeleteItemCommand(item);
         delete_item_command.execute();
         return delete_item_command.isExecuted();
     }
 
-    public boolean editItem(Item item, Item updated_item, Context context){
-        EditItemCommand edit_item_command = new EditItemCommand(item_list, item, updated_item, context);
+    public boolean editItem(Item item, Item updated_item){
+        EditItemCommand edit_item_command = new EditItemCommand(item, updated_item);
 
         edit_item_command.execute();
         return edit_item_command.isExecuted();
@@ -49,14 +47,6 @@ public class ItemListController {
 
     public int getIndex(Item item) {
         return item_list.getIndex(item);
-    }
-
-    public int getSize() {
-        return item_list.getSize();
-    }
-
-    public void loadItems(Context context) {
-        item_list.loadItems(context);
     }
 
     public ArrayList<Item> filterItems(String user_id, String status) {
@@ -82,6 +72,10 @@ public class ItemListController {
 
     public void removeObserver(Observer observer) {
         item_list.removeObserver(observer);
+    }
+
+    public void getRemoteItems(){
+        item_list.getRemoteItems();
     }
 }
 

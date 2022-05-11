@@ -30,11 +30,11 @@ public class BorrowedItemsActivity extends AppCompatActivity implements Observer
 
         context = getApplicationContext();
 
-        user_list_controller.loadUsers(context);
+        user_list_controller.getRemoteUsers();
         String username = user_list_controller.getUsernameByUserId(user_id);
 
         item_list_controller.addObserver(this);
-        item_list_controller.loadItems(context);
+        item_list_controller.getRemoteItems();
         item_list_controller.setItems(item_list_controller.getBorrowedItemsByUsername(username));
 
         // When an item is long clicked, this starts ViewItemActivity
@@ -65,7 +65,7 @@ public class BorrowedItemsActivity extends AppCompatActivity implements Observer
      * Update the view
      */
     public void update(){
-        borrowed_items = (ListView) findViewById(R.id.borrowed_items);
+        borrowed_items = findViewById(R.id.borrowed_items);
         adapter = new ItemActivityAdapter(this, item_list_controller.getItems());
         borrowed_items.setAdapter(adapter);
         adapter.notifyDataSetChanged();

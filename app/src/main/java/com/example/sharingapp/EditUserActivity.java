@@ -37,11 +37,11 @@ public class EditUserActivity extends AppCompatActivity implements Observer {
         Intent intent = getIntent(); // Get intent from MainActivity
         user_id = intent.getStringExtra("user_id");
 
-        username = (TextView) findViewById(R.id.username);
+        username = findViewById(R.id.username);
 
         context = getApplicationContext();
         user_list_controller.addObserver(this);
-        user_list_controller.loadUsers(context); // First call to update()
+        user_list_controller.getRemoteUsers(); // First call to update()
         on_create_update = false; // Suppress any further calls to update()
     }
 
@@ -56,7 +56,7 @@ public class EditUserActivity extends AppCompatActivity implements Observer {
         // Reuse the user id
         User updated_user = new User(username_str, email_str, user_id);
 
-        boolean success = user_list_controller.editUser(user, updated_user, context);
+        boolean success = user_list_controller.editUser(user, updated_user);
         if (!success){
             return;
         }
@@ -86,8 +86,8 @@ public class EditUserActivity extends AppCompatActivity implements Observer {
             user = user_list_controller.getUserByUserId(user_id);
             UserController user_controller = new UserController(user);
 
-            username = (TextView) findViewById(R.id.username);
-            email = (EditText) findViewById(R.id.email);
+            username = findViewById(R.id.username);
+            email =  findViewById(R.id.email);
 
             username.setText(user_controller.getUsername());
             email.setText(user_controller.getEmail());

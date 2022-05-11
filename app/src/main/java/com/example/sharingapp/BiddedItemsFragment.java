@@ -17,6 +17,7 @@ public class BiddedItemsFragment extends ItemsFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater,container, savedInstanceState);
+        assert this.getArguments() != null;
         super.setUserId(this.getArguments());
         super.setVariables(R.layout.bidded_items_fragment, R.id.my_bidded_items);
         super.loadItems(BiddedItemsFragment.this);

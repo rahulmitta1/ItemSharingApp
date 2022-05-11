@@ -37,13 +37,13 @@ public class SearchActivity extends AppCompatActivity implements Observer {
         Intent intent = getIntent(); // Get intent from MainActivity
         user_id = intent.getStringExtra("user_id");
 
-        search_entry = (EditText) findViewById(R.id.search_entry);
+        search_entry = findViewById(R.id.search_entry);
 
         context = getApplicationContext();
 
         item_list_controller.addObserver(this);
-        user_list_controller.loadUsers(context);
-        item_list_controller.loadItems(context);
+        user_list_controller.getRemoteUsers();
+        item_list_controller.getRemoteItems();
         item_list_controller.setItems(item_list_controller.getSearchItems(user_id));
 
         // When an item is long clicked, this starts ViewItemActivity
@@ -64,7 +64,7 @@ public class SearchActivity extends AppCompatActivity implements Observer {
     protected void onStart() {
         super.onStart();
         search_entry.setText("");
-        item_list_controller.loadItems(context);
+        item_list_controller.getRemoteItems();
         item_list_controller.setItems(item_list_controller.getSearchItems(user_id));
     }
 
@@ -82,7 +82,7 @@ public class SearchActivity extends AppCompatActivity implements Observer {
 
     public void keywordSearch(View view) {
         String entry = search_entry.getText().toString();
-        item_list_controller.loadItems(context);
+        item_list_controller.getRemoteItems();
         if (entry.equals("")) {
             item_list_controller.setItems(item_list_controller.getSearchItems(user_id));
             return;
@@ -125,7 +125,7 @@ public class SearchActivity extends AppCompatActivity implements Observer {
      * Update the view
      */
     public void update(){
-        all_items = (ListView) findViewById(R.id.all_items);
+        all_items = findViewById(R.id.all_items);
         adapter = new ItemActivityAdapter(this, item_list_controller.getItems());
         all_items.setAdapter(adapter);
         adapter.notifyDataSetChanged();

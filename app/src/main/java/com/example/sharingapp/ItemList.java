@@ -1,21 +1,16 @@
 package com.example.sharingapp;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.reflect.TypeToken;
-
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class ItemList extends Observable {
     private ArrayList<Item> items;
-    private final StorageHandler<Item> storageHandler;
 
     public ItemList(){
         items = new ArrayList<>();
-        String FILENAME = "items.sav";
-        storageHandler = new StorageHandler<>(FILENAME, new TypeToken<ArrayList<Item>>() {}.getType());
-    }
+   }
 
     public void setItems(ArrayList<Item> item_list){
         items = item_list;
@@ -24,16 +19,6 @@ public class ItemList extends Observable {
 
     public ArrayList<Item> getItems(){
         return items;
-    }
-
-    public void addItem(Item item){
-        items.add(item);
-        notifyObservers();
-    }
-
-    public void deleteItem(Item item){
-        items.remove(item);
-        notifyObservers();
     }
 
     public Item getItem(int index){
@@ -49,10 +34,6 @@ public class ItemList extends Observable {
             pos = pos + 1;
         }
         return -1;
-    }
-
-    public int getSize(){
-        return items.size();
     }
 
     // Used by AvailableItemsFragment, BorrowedItemsFragment, and BiddedItemsFragment
@@ -112,15 +93,16 @@ public class ItemList extends Observable {
         return null;
     }
 
-    public void loadItems(Context context){
-        items = storageHandler.load(context);
-        Log.i("items", items.toString());
+    public void getRemoteItems(){
+        ElasticSearchManager.GetItemListTask get_item_list_task = new ElasticSearchManager.GetItemListTask();
+        get_item_list_task.execute();
+
+        try {
+            items = get_item_list_task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         notifyObservers();
     }
-
-    public boolean saveItems(Context context){
-        return storageHandler.save(context, items);
-    }
-
 
 }

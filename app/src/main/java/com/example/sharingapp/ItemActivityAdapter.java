@@ -38,10 +38,10 @@ public class ItemActivityAdapter extends ArrayAdapter<Item> {
             convertView = inflater.inflate(R.layout.itemlist_item, parent, false);
         }
 
-        TextView title_tv = (TextView) convertView.findViewById(R.id.title_tv);
-        TextView status_tv = (TextView) convertView.findViewById(R.id.status_tv);
-        TextView description_tv = (TextView) convertView.findViewById(R.id.description_tv);
-        ImageView photo = (ImageView) convertView.findViewById(R.id.image_view);
+        TextView title_tv = convertView.findViewById(R.id.title_tv);
+        TextView status_tv = convertView.findViewById(R.id.status_tv);
+        TextView description_tv = convertView.findViewById(R.id.description_tv);
+        ImageView photo = convertView.findViewById(R.id.image_view);
 
         if (thumbnail != null) {
             photo.setImageBitmap(thumbnail);

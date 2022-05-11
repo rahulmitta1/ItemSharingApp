@@ -30,15 +30,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        username = (EditText) findViewById(R.id.username);
-        email = (EditText) findViewById(R.id.email);
-        email_tv = (TextView) findViewById(R.id.email_tv);
+        username = findViewById(R.id.username);
+        email = findViewById(R.id.email);
+        email_tv = findViewById(R.id.email_tv);
 
         email.setVisibility(View.GONE);
         email_tv.setVisibility(View.GONE);
 
         context = getApplicationContext();
-        user_list_controller.loadUsers(context);
+        user_list_controller.getRemoteUsers();
     }
 
     public void login(View view) {
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
             UserController user_controller = new UserController(user);
             user_id = user_controller.getId();
 
-            boolean success = user_list_controller.addUser(user, context);
+            boolean success = user_list_controller.addUser(user);
             if (!success){
                 return;
             }
